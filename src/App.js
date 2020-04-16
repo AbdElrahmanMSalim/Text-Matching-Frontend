@@ -45,8 +45,8 @@ export default class App extends React.Component {
       const title = pic.size + "-" + pic.name;
 
       const data = new FormData();
-      data.append("image", pic);
       data.append("title", title);
+      data.append("image", pic);
       try {
         const response = await http.post(
           "http://139.59.68.43:8000/api/questionImages",
@@ -66,9 +66,13 @@ export default class App extends React.Component {
 
   async handleOnSubmitTest(e) {
     e.preventDefault();
-    if (!this.state.testPicture) return alert("No test pictures attached");
+
+    const pic = this.state.testPicture;
+    if (!pic) return alert("No test pictures attached");
+    const title = pic.size + "-" + pic.name;
 
     const data = new FormData();
+    data.append("title", title);
     data.append("testImage", this.state.testPicture[0]);
     try {
       const response = await http.post(
@@ -90,8 +94,8 @@ export default class App extends React.Component {
     const title = pic[0].size + "-" + pic[0].name;
 
     const data = new FormData();
-    data.append("image", pic[0]);
     data.append("title", title);
+    data.append("image", pic[0]);
 
     try {
       const response = await http.post(

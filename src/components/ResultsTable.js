@@ -6,7 +6,9 @@ class ResultsTable extends Component {
     {
       path: "image",
       label: "Image",
-      content: (result) => <img height={150} src={result.image} />,
+      content: (result) => (
+        <img height={150} src={"http://139.59.68.43/" + result.image} />
+      ),
     },
     {
       path: "question",
