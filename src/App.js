@@ -9,6 +9,11 @@ import ResultsTable from "./components/ResultsTable";
 import { paginate } from "./utils/paginate";
 import "./App.css";
 
+// const serverIP = "http://139.59.68.43:8000";
+const serverIP = "http://localhost:8000";
+const testImageRoute = serverIP + "/api/testImage";
+const questionImagesRoute = serverIP + "/api/questionImages";
+
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -48,10 +53,7 @@ export default class App extends React.Component {
       data.append("title", title);
       data.append("image", pic);
       try {
-        const response = await http.post(
-          "http://139.59.68.43:8000/api/questionImages",
-          data
-        );
+        const response = await http.post(questionImagesRoute, data);
         if (response.status === 400)
           alert("Failed in image: " + title + " with error: " + response.data);
         else console.log(title, " is stored successfully: ", response);
@@ -76,10 +78,7 @@ export default class App extends React.Component {
     data.append("title", title);
     data.append("testImage", this.state.testPicture[0]);
     try {
-      const response = await http.post(
-        "http://139.59.68.43:8000/api/testImage",
-        data
-      );
+      const response = await http.post(testImageRoute, data);
 
       if (response) alert("Success");
       this.setState({ result: response.data });
@@ -100,10 +99,7 @@ export default class App extends React.Component {
     data.append("image", pic[0]);
 
     try {
-      const response = await http.post(
-        "http://139.59.68.43:8000/api/questionImages",
-        data
-      );
+      const response = await http.post(questionImagesRoute, data);
       console.log(response);
       if (response) alert("Success");
     } catch (err) {
