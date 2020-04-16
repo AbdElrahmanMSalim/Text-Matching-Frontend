@@ -172,7 +172,7 @@ export default class App extends React.Component {
                 withIcon={true}
                 buttonText="Choose images"
                 onChange={this.onDropDB}
-                imgExtension={[".jpg", ".png"]}
+                imgExtension={[".jpg", ".jpeg", ".png"]}
                 label="Max file size: 5mb, accepted: jpg, png"
                 maxFileSize={5242880}
                 withPreview
