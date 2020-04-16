@@ -84,7 +84,7 @@ export default class App extends React.Component {
       this.setState({ result: response.data });
     } catch (err) {
       console.log(err);
-      alert("Failed: " + err.response.data);
+      if (err.response.data) alert("Failed: " + err.response.data);
     }
   }
 
@@ -104,7 +104,7 @@ export default class App extends React.Component {
       if (response) alert("Success");
     } catch (err) {
       console.log(err);
-      alert("Failed: " + err.response.data);
+      if (err.response.data) alert("Failed: " + err.response.data);
     }
   };
 
