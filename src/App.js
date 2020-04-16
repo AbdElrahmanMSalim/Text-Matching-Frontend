@@ -57,7 +57,7 @@ export default class App extends React.Component {
         if (response.status === 400)
           alert("Failed in image: " + title + " with error: " + response.data);
         else console.log(title, " is stored successfully: ", response);
-        // if (response) alert("Success");
+        if (response) alert("Success");
       } catch (err) {
         console.log(err);
         alert(
