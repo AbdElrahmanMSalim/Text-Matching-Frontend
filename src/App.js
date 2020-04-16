@@ -49,16 +49,15 @@ export default class App extends React.Component {
       data.append("image", pic);
       try {
         const response = await http.post(
-          "http://localhost:3000/api/questionImages",
+          "http://139.59.68.43:8000/api/questionImages",
           data
         );
         if (response.status === 400)
           alert("Failed in image: " + title + " with error: " + response.data);
-        else console.log("title is stored successfully: ", response);
+        else console.log(title, " is stored successfully: ", response);
         // if (response) alert("Success");
       } catch (err) {
         console.log(err);
-        console.log(err.response);
         alert(
           "Failed in image: " + title + " with error: " + err.response.data
         );
@@ -78,13 +77,14 @@ export default class App extends React.Component {
     data.append("testImage", this.state.testPicture[0]);
     try {
       const response = await http.post(
-        "http://localhost:3000/api/testImage",
+        "http://139.59.68.43:8000/api/testImage",
         data
       );
 
       if (response) alert("Success");
       this.setState({ result: response.data });
     } catch (err) {
+      console.log(err);
       alert("Failed: " + err.response.data);
     }
   }
@@ -101,12 +101,13 @@ export default class App extends React.Component {
 
     try {
       const response = await http.post(
-        "http://localhost:3000/api/questionImages",
+        "http://139.59.68.43:8000/api/questionImages",
         data
       );
       console.log(response);
       if (response) alert("Success");
     } catch (err) {
+      console.log(err);
       alert("Failed: " + err.response.data);
     }
   };
