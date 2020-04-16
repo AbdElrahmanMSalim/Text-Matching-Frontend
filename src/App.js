@@ -9,8 +9,8 @@ import ResultsTable from "./components/ResultsTable";
 import { paginate } from "./utils/paginate";
 import "./App.css";
 
-// const serverIP = "http://139.59.68.43:8000";
-const serverIP = "http://localhost:8000";
+const serverIP = "http://139.59.68.43:8000";
+// const serverIP = "http://localhost:8000";
 const testImageRoute = serverIP + "/api/testImage";
 const questionImagesRoute = serverIP + "/api/questionImages";
 
