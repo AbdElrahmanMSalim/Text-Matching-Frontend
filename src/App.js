@@ -55,11 +55,8 @@ export default class App extends React.Component {
       data.append("title", title);
       data.append("image", pic);
 
-      const config = {
-        headers: { "Access-Control-Allow-Origin": "*" },
-      };
       try {
-        const response = await http.post(questionImagesRoute, data, config);
+        const response = await http.post(questionImagesRoute, data);
         if (response.status === 400)
           alert("Failed in image: " + title + " with error: " + response.data);
         else console.log(title, " is stored successfully: ", response);
@@ -85,11 +82,8 @@ export default class App extends React.Component {
     data.append("title", title);
     data.append("testImage", this.state.testPicture[0]);
 
-    const config = {
-      headers: { "Access-Control-Allow-Origin": "*" },
-    };
     try {
-      const response = await http.post(testImageRoute, data, config);
+      const response = await http.post(testImageRoute, data);
 
       if (response) alert("Success");
       this.setState({ result: response.data });
