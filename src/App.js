@@ -9,8 +9,8 @@ import ResultsTable from "./components/ResultsTable";
 import { paginate } from "./utils/paginate";
 import "./App.css";
 
-const serverIP = "http://139.59.68.43:8000";
-// const serverIP = "http://localhost:8000";
+// const serverIP = "http://139.59.68.43:8000";
+const serverIP = "http://localhost:8000";
 const testImageRoute = serverIP + "/api/testImage";
 const questionImagesRoute = serverIP + "/api/questionImages";
 
@@ -18,6 +18,8 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      successfulImages: [],
+      failedImages: [],
       pictures: [],
       result: {},
       sortColumn: { path: "similarity", order: "desc" },
@@ -84,7 +86,7 @@ export default class App extends React.Component {
       this.setState({ result: response.data });
     } catch (err) {
       console.log(err);
-      if (err.response.data) alert("Failed: " + err.response.data);
+      if (err.response) alert("Failed: " + err.response.data);
     }
   }
 
@@ -101,10 +103,24 @@ export default class App extends React.Component {
     try {
       const response = await http.post(questionImagesRoute, data);
       console.log(response);
-      if (response) alert("Success");
+
+      this.setState({
+        successfulImages: [...this.state.successfulImages, pic[0].name],
+      });
+      console.log(this.state.successfulImages);
     } catch (err) {
       console.log(err);
-      if (err.response.data) alert("Failed: " + err.response.data);
+      if (err.response) {
+        alert("Failed: " + err.response.data);
+
+        this.setState({
+          failedImages: {
+            ...this.state.failedImages,
+            [pic[0].name]: err.response.data,
+          },
+        });
+        console.log(this.state.failedImages);
+      }
     }
   };
 
@@ -231,7 +247,7 @@ export default class App extends React.Component {
         {result.extractedText ? (
           <React.Fragment>
             <div className="row m-5 pl-5">
-              <h2>Extracted text: {result.extractedText}</h2>
+              <h3>Extracted text: {result.extractedText}</h3>
             </div>
             <div className="row m-5 pl-5">
               <Search
