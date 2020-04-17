@@ -54,17 +54,22 @@ export default class App extends React.Component {
       const data = new FormData();
       data.append("title", title);
       data.append("image", pic);
+
+      const config = {
+        headers: { "Access-Control-Allow-Origin": "*" },
+      };
       try {
-        const response = await http.post(questionImagesRoute, data);
+        const response = await http.post(questionImagesRoute, data, config);
         if (response.status === 400)
           alert("Failed in image: " + title + " with error: " + response.data);
         else console.log(title, " is stored successfully: ", response);
         if (response) alert("Success");
       } catch (err) {
         console.log(err);
-        alert(
-          "Failed in image: " + title + " with error: " + err.response.data
-        );
+        if (err.response)
+          alert(
+            "Failed in image: " + title + " with error: " + err.response.data
+          );
       }
     }
   }
@@ -79,8 +84,12 @@ export default class App extends React.Component {
     const data = new FormData();
     data.append("title", title);
     data.append("testImage", this.state.testPicture[0]);
+
+    const config = {
+      headers: { "Access-Control-Allow-Origin": "*" },
+    };
     try {
-      const response = await http.post(testImageRoute, data);
+      const response = await http.post(testImageRoute, data, config);
 
       if (response) alert("Success");
       this.setState({ result: response.data });
