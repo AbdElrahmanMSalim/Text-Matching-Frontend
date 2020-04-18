@@ -47,6 +47,8 @@ export default class App extends React.Component {
 
   async handleOnSubmit(e) {
     e.preventDefault();
+
+    if (!this.state.pictures.length) alert("No pictures attached");
     for (const pic of this.state.pictures) {
       if (!pic) return alert("No pictures attached");
       const title = pic.size + "-" + pic.name;
@@ -57,18 +59,37 @@ export default class App extends React.Component {
 
       try {
         const response = await http.post(questionImagesRoute, data);
-        if (response.status === 400)
-          alert("Failed in image: " + title + " with error: " + response.data);
-        else console.log(title, " is stored successfully: ", response);
-        if (response) alert("Success");
+        if (response.status === 400) {
+          // alert("Failed in image: " + pic.name + " with error: " + response.data);
+          this.setState({
+            failedImages: {
+              ...this.state.failedImages,
+              [pic.name]: response.data,
+            },
+          });
+        } else {
+          // alert("Success");
+          console.log(title, " is stored successfully: ", response);
+          this.setState({
+            successfulImages: [...this.state.successfulImages, pic.name],
+          });
+        }
       } catch (err) {
         console.log(err);
-        if (err.response)
-          alert(
-            "Failed in image: " + title + " with error: " + err.response.data
-          );
+        if (err.response) {
+          // alert(
+          //   "Failed in image: " + pic.name + " with error: " + err.response.data
+          // );
+          this.setState({
+            failedImages: [
+              ...this.state.failedImages,
+              { name: title, error: err.response.data },
+            ],
+          });
+        }
       }
     }
+    alert("Finished");
   }
 
   async handleOnSubmitTest(e) {
@@ -110,19 +131,17 @@ export default class App extends React.Component {
       this.setState({
         successfulImages: [...this.state.successfulImages, pic[0].name],
       });
-      console.log(this.state.successfulImages);
     } catch (err) {
       console.log(err);
       if (err.response) {
-        alert("Failed: " + err.response.data);
+        // alert("Failed: " + err.response.data);
 
         this.setState({
-          failedImages: {
+          failedImages: [
             ...this.state.failedImages,
-            [pic[0].name]: err.response.data,
-          },
+            { name: title, error: err.response.data },
+          ],
         });
-        console.log(this.state.failedImages);
       }
     }
   };
@@ -178,15 +197,28 @@ export default class App extends React.Component {
     } = this.state;
 
     const { totalCount, data: results } = this.getPagedData();
+    console.log(this.state.successfulImages);
+    console.log(this.state.failedImages);
 
     return (
       <div className="container-fluid m-5 ">
         <div className="row">
-          <div className="col-sm">
-            <div className="row justify-content-md-center">
+          <div className="col-sm ">
+            <div className="row justify-content-md-center m-2">
               <h1> Store in Database </h1>
             </div>
             <form onSubmit={this.handleOnSubmit}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Button color="primary" type="submit" style={{ margin: 5 }}>
+                  Store in the database
+                </Button>
+              </div>
               <ImageUploader
                 withIcon={true}
                 buttonText="Choose images"
@@ -196,35 +228,14 @@ export default class App extends React.Component {
                 maxFileSize={5242880}
                 withPreview
               />
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Button color="primary" type="submit">
-                  Store in the database
-                </Button>
-              </div>
             </form>
           </div>
 
-          <div className="col-sm">
-            <div className="row justify-content-md-center">
+          <div className="col-sm ">
+            <div className="row justify-content-md-center m-2">
               <h1> Test </h1>
             </div>
             <form onSubmit={this.handleOnSubmitTest}>
-              <ImageUploader
-                withIcon={true}
-                buttonText="Choose images"
-                onChange={this.onDropTest}
-                imgExtension={[".jpg", ".png"]}
-                label="Max file size: 5mb, accepted: jpg, png"
-                maxFileSize={5242880}
-                withPreview
-                singleImage
-              />
               <div
                 style={{
                   display: "flex",
@@ -243,14 +254,33 @@ export default class App extends React.Component {
                   Store this in DB
                 </Button>
               </div>
+              <ImageUploader
+                withIcon={true}
+                buttonText="Choose images"
+                onChange={this.onDropTest}
+                imgExtension={[".jpg", ".png"]}
+                label="Max file size: 5mb, accepted: jpg, png"
+                maxFileSize={5242880}
+                withPreview
+                singleImage
+              />
             </form>
           </div>
         </div>
 
+        {this.state.failedImages ? (
+          <React.Fragment>
+            {this.state.failedImages.map(({ name, error }) => (
+              <h5 className="m-3">
+                {name}, {error}
+              </h5>
+            ))}
+          </React.Fragment>
+        ) : null}
         {result.extractedText ? (
           <React.Fragment>
             <div className="row m-5 pl-5">
-              <h3>Extracted text: {result.extractedText}</h3>
+              <h5>Extracted text: {result.extractedText}</h5>
             </div>
             <div className="row m-5 pl-5">
               <Search
