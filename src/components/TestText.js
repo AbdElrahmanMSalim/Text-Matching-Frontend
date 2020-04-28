@@ -8,8 +8,8 @@ import ResultsTable from "./ResultsTable";
 import { paginate } from "../utils/paginate";
 import http from "../services/httpServices";
 
-const testTextRoute = "http://localhost:8000/api/testText";
-const questionImagesRoute = "http://localhost:8000/api/questionImages";
+const testTextRoute = "http://139.59.68.43:8000/api/testText";
+const questionImagesRoute = "http://139.59.68.43:8000/api/questionImages";
 //139.59.68.43
 
 export default class TestText extends React.Component {

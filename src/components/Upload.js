@@ -4,8 +4,7 @@ import { Button } from "reactstrap";
 import ImageUploader from "react-images-upload";
 import http from "../services/httpServices";
 
-const questionImagesRoute = "http://localhost:8000/api/questionImages";
-// const questionImagesRoute = "http://139.59.68.43:8000/api/questionImages";
+const questionImagesRoute = "http://139.59.68.43:8000/api/questionImages";
 
 export default class Upload extends React.Component {
   constructor(props) {
