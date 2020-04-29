@@ -8,8 +8,8 @@ import ResultsTable from "./ResultsTable";
 import { paginate } from "../utils/paginate";
 import http from "../services/httpServices";
 
-const testTextRoute = "http://139.59.68.43:8000/api/testText";
-const questionImagesRoute = "http://139.59.68.43:8000/api/questionImages";
+const testTextRoute = "http://localhost:8000/api/testText";
+const questionImagesRoute = "http://localhost:8000/api/questionImages";
 //139.59.68.43
 
 export default class TestText extends React.Component {
@@ -19,6 +19,7 @@ export default class TestText extends React.Component {
       successfulImages: [],
       failedImages: [],
       pictures: [],
+      testPicture: [],
       result: {},
       sortColumn: { path: "similarity", order: "desc" },
       searchQuery: "",
@@ -32,10 +33,11 @@ export default class TestText extends React.Component {
   onDropTest(picture) {
     this.setState({
       testPicture: picture,
+      result: {},
     });
   }
 
-  async handleOnSubmitTest(e) {
+  handleOnSubmitTest = async (e) => {
     e.preventDefault();
 
     const pic = this.state.testPicture[0];
@@ -46,8 +48,12 @@ export default class TestText extends React.Component {
     data.append("title", title);
     data.append("testImage", this.state.testPicture[0]);
 
+    let response;
     try {
-      const response = await http.post(testTextRoute, data);
+      setTimeout(async () => {
+        response = http.post(testTextRoute, data);
+      }, 1000);
+      response = await http.post(testTextRoute, data);
 
       if (response) alert("Success");
       this.setState({ result: response.data });
@@ -55,7 +61,7 @@ export default class TestText extends React.Component {
       console.log(err);
       if (err.response) alert("Failed: " + err.response.data);
     }
-  }
+  };
 
   storeTestImageInDB = async () => {
     const pic = this.state.testPicture;
@@ -71,7 +77,7 @@ export default class TestText extends React.Component {
       const response = await http.post(questionImagesRoute, data);
       console.log(response);
 
-      alert("Success");
+      if (response) alert("Success");
       this.setState({
         successfulImages: [...this.state.successfulImages, pic[0].name],
       });
@@ -130,6 +136,7 @@ export default class TestText extends React.Component {
 
     return { totalCount: ordered.length, data: results };
   };
+
   render() {
     const {
       result,
@@ -140,8 +147,6 @@ export default class TestText extends React.Component {
     } = this.state;
 
     const { totalCount, data: results } = this.getPagedData();
-    console.log(this.state.successfulImages);
-    console.log(this.state.failedImages);
 
     return (
       <div className="container-fluid m-5 ">

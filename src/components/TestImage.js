@@ -8,8 +8,8 @@ import ImageResultsTable from "./ImageResultsTable";
 import { paginate } from "../utils/paginate";
 import http from "../services/httpServices";
 
-const testImageRoute = "http://139.59.68.43:8000/api/testImage";
-const questionImagesRoute = "http://139.59.68.43:8000/api/questionImages";
+const testImageRoute = "http://localhost:8000/api/testImage";
+const questionImagesRoute = "http://localhost:8000/api/questionImages";
 //139.59.68.43
 
 export default class TestText extends React.Component {
@@ -143,7 +143,6 @@ export default class TestText extends React.Component {
     } = this.state;
 
     const { totalCount, data: results } = this.getPagedData();
-    console.log(result);
 
     return (
       <div className="container-fluid m-5 ">
