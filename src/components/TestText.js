@@ -50,9 +50,9 @@ export default class TestText extends React.Component {
 
     let response;
     try {
-      setTimeout(async () => {
-        response = http.post(testTextRoute, data);
-      }, 1000);
+      // setTimeout(async () => {
+      //   response = http.post(testTextRoute, data);
+      // }, 1000);
       response = await http.post(testTextRoute, data);
 
       if (response) alert("Success");
@@ -123,8 +123,8 @@ export default class TestText extends React.Component {
 
     const searchResults = searchQuery
       ? backendResults.scores.filter(({ question, similarity }) =>
-          question.toLowerCase().includes(searchQuery.toLowerCase())
-        )
+        question.toLowerCase().includes(searchQuery.toLowerCase())
+      )
       : null;
 
     let ordered = _.sortBy(
