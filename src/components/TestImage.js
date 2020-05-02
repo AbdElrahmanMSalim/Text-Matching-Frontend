@@ -8,8 +8,8 @@ import ImageResultsTable from "./ImageResultsTable";
 import { paginate } from "../utils/paginate";
 import http from "../services/httpServices";
 
-const testImageRoute = "http://localhost:8000/api/testImage";
-const questionImagesRoute = "http://localhost:8000/api/questionImages";
+const testImageRoute = "http://139.59.68.43:8000/api/testImage";
+const questionImagesRoute = "http://139.59.68.43:8000/api/questionImages";
 //139.59.68.43
 
 export default class TestText extends React.Component {
@@ -123,11 +123,18 @@ export default class TestText extends React.Component {
         )
       : null;
 
-    const ordered = _.orderBy(
+    let ordered = _.sortBy(
       searchResults ? searchResults : backendResults.scores,
-      [sortColumn.path],
-      [sortColumn.order]
+      [
+        function (obj) {
+          return parseFloat(obj[sortColumn.path]);
+        },
+      ]
     );
+    if (sortColumn.order === "desc") {
+      ordered = ordered.reverse();
+    }
+
     const results = paginate(ordered, currentPage, pageSize);
 
     return { totalCount: ordered.length, data: results };
