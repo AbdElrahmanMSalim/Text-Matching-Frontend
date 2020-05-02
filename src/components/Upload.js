@@ -3,8 +3,13 @@ import _ from "lodash";
 import { Button } from "reactstrap";
 import ImageUploader from "react-images-upload";
 import http from "../services/httpServices";
+import Search from "./Search";
+import Pagination from "./Pagination";
+import SearchResults from "./SearchResults";
+import { paginate } from "../utils/paginate";
 
 const questionImagesRoute = "http://139.59.68.43:8000/api/questionImages";
+const searchRoute = "http://139.59.68.43:8000/api/search";
 //139.59.68.43
 
 export default class Upload extends React.Component {
@@ -14,9 +19,19 @@ export default class Upload extends React.Component {
       successfulImages: [],
       failedImages: [],
       pictures: [],
+      result: {},
+      sortColumn: { path: "similarity", order: "desc" },
+      searchQuery: "",
+      currentPage: 1,
+      pageSize: 4,
     };
     this.onDropDB = this.onDropDB.bind(this);
     this.handleOnSubmit = this.handleOnSubmit.bind(this);
+  }
+
+  async componentDidMount() {
+    const result = await http.get(searchRoute);
+    this.setState({ result });
   }
 
   onDropDB(picture) {
@@ -72,7 +87,59 @@ export default class Upload extends React.Component {
     alert("Finished");
   }
 
+  handleSort = (sortColumn) => {
+    this.setState({ sortColumn });
+  };
+
+  handlePageChange = (page) => {
+    this.setState({ currentPage: page });
+  };
+
+  handleSearchChange = (query) => {
+    this.setState({
+      searchQuery: query,
+      currentPage: 1,
+      selectedGenre: null,
+    });
+  };
+
+  getPagedData = () => {
+    const {
+      pageSize,
+      currentPage,
+      sortColumn,
+      searchQuery,
+      result: backendResults,
+    } = this.state;
+
+    const searchResults = searchQuery
+      ? backendResults.data.filter((el) =>
+          el.text.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      : null;
+
+    let ordered = _.sortBy(
+      searchResults ? searchResults : backendResults.scores,
+      [
+        function (obj) {
+          return parseFloat(obj[sortColumn.path]);
+        },
+      ]
+    );
+    if (sortColumn.order === "desc") {
+      ordered = ordered.reverse();
+    }
+
+    const results = paginate(ordered, currentPage, pageSize);
+
+    return { totalCount: ordered.length, data: results };
+  };
+
   render() {
+    const { pageSize, currentPage, sortColumn, searchQuery } = this.state;
+
+    const { totalCount, data: results } = this.getPagedData();
+
     return (
       <div className="container-fluid m-5 ">
         <div className="row">
@@ -114,6 +181,31 @@ export default class Upload extends React.Component {
             ))}
           </React.Fragment>
         ) : null}
+
+        <div className="row justify-content-md-center m-2">
+          <h1> Search in Database </h1>
+        </div>
+        <div className="row d-flex justify-content-center">
+          <Search
+            value={searchQuery}
+            onChange={this.handleSearchChange}
+          ></Search>
+          {results.length ? (
+            <React.Fragment>
+              <SearchResults
+                results={results}
+                sortColumn={sortColumn}
+                onSort={this.handleSort}
+              />
+              <Pagination
+                itemsCount={totalCount}
+                pageSize={pageSize}
+                currentPage={currentPage}
+                onPageChange={this.handlePageChange}
+              />
+            </React.Fragment>
+          ) : null}
+        </div>
       </div>
     );
   }
